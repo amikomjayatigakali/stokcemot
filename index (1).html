@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Stok Es Cemot Nusantara</title>
+<style>
+  :root{
+    --bg: #F6F7FB;
+    --card: #FFFFFF;
+    --ink: #1A1D29;
+    --muted: #8B8FA3;
+    --line: #ECEEF4;
+
+    --brand: #FF6B6B;
+    --brand-soft: #FFE8E8;
+    --brand-deep: #C23E3E;
+
+    --ok: #2BB673;
+
+    --danger: #FF4D4D;
+    --danger-soft: #FFE5E5;
+    --danger-deep: #C42E2E;
+  }
+
+  *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; margin:0; padding:0; }
+
+  html, body{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+  }
+
+  .app{
+    max-width: 480px;
+    margin: 0 auto;
+    padding-bottom: 100px;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  header.top{
+    background: linear-gradient(160deg, var(--brand), #FF8C69);
+    padding: 28px 20px 22px;
+    border-radius: 0 0 28px 28px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .top-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    position:relative;
+    z-index:1;
+  }
+
+  .eyebrow{
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    opacity: 0.85;
+    margin-bottom: 4px;
+  }
+
+  h1{
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+  }
+
+  .date-pill{
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(255,255,255,0.2);
+    padding: 6px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  /* Summary stats */
+  .stats-row{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 18px;
+    position:relative;
+    z-index:1;
+  }
+
+  .stat{
+    background: rgba(255,255,255,0.16);
+    border-radius: 14px;
+    padding: 10px 6px;
+    text-align:center;
+  }
+  .stat .num{
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1.1;
+  }
+  .stat .lbl{
+    font-size: 10px;
+    opacity: 0.9;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  /* Content */
+  .content{
+    padding: 20px;
+  }
+
+  /* Alert section */
+  .alert-box{
+    display:none;
+    background: var(--card);
+    border: 1px solid var(--danger-soft);
+    border-left: 4px solid var(--danger);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 18px;
+  }
+  .alert-box.show{ display:block; }
+
+  .alert-head{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--danger-deep);
+    margin-bottom: 10px;
+  }
+
+  .alert-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding: 7px 0;
+    font-size: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .alert-item:last-child{ border-bottom:none; }
+  .alert-item .alert-name{ font-weight: 700; }
+  .alert-item .alert-sisa{
+    color: var(--danger-deep);
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .wa-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 8px;
+    background: #25D366;
+    color: #fff;
+    border:none;
+    border-radius: 12px;
+    padding: 13px;
+    font-size: 15px;
+    font-weight: 800;
+    text-decoration:none;
+    margin-top: 12px;
+    width: 100%;
+  }
+  .wa-btn:active{ opacity: 0.85; }
+
+  /* Section title */
+  .section-title{
+    font-size: 17px;
+    font-weight: 800;
+    margin: 4px 0 12px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .section-title .count{
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    background: var(--line);
+    padding: 4px 10px;
+    border-radius: 999px;
+  }
+
+  /* Item cards */
+  .item-grid{
+    display:flex;
+    flex-direction:column;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .item-card{
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 14px;
+    display:flex;
+    align-items:center;
+    gap: 12px;
+  }
+
+  .item-card.low{
+    border-color: var(--danger-soft);
+    background: var(--danger-soft);
+  }
+
+  .item-icon{
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    background: var(--brand-soft);
+    color: var(--brand-deep);
+  }
+  .item-icon svg{
+    width: 22px;
+    height: 22px;
+  }
+  .item-card.low .item-icon{
+    background: #fff;
+    color: var(--danger-deep);
+  }
+
+  .item-info{
+    flex:1;
+    min-width:0;
+  }
+  .item-name{
+    font-weight: 800;
+    font-size: 15px;
+    margin-bottom: 2px;
+  }
+  .item-threshold{
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .item-card.low .item-threshold{
+    color: var(--danger-deep);
+    font-weight: 700;
+  }
+
+  .qty-controls{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    flex-shrink:0;
+  }
+
+  .qty-btn{
+    width: 32px; height: 32px;
+    border-radius: 9px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    line-height:1;
+    font-family: inherit;
+  }
+  .qty-btn:active{ opacity: 0.7; }
+
+  .qty-val{
+    min-width: 52px;
+    text-align:center;
+  }
+  .qty-val .num{
+    font-weight: 800;
+    font-size: 16px;
+    display:block;
+  }
+  .qty-val .unit{
+    font-size: 9px;
+    color: var(--muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .status-dot{
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--ok);
+    flex-shrink:0;
+  }
+  .item-card.low .status-dot{ background: var(--danger); }
+
+  /* FAB */
+  .fab{
+    position: fixed;
+    bottom: 22px;
+    right: 22px;
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: #fff;
+    border:none;
+    font-size: 24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow: 0 6px 20px rgba(26,29,41,0.25);
+    z-index: 50;
+  }
+  .fab svg{
+    width: 24px;
+    height: 24px;
+  }
+  .fab:active{ opacity: 0.85; }
+
+  /* Settings sheet */
+  .sheet-overlay{
+    display:none;
+    position: fixed;
+    inset: 0;
+    background: rgba(20,20,30,0.45);
+    z-index: 100;
+    align-items:flex-end;
+    justify-content:center;
+  }
+  .sheet-overlay.show{ display:flex; }
+
+  .sheet{
+    background: var(--card);
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  .sheet-handle{
+    width: 36px; height: 4px;
+    background: var(--line);
+    border-radius: 999px;
+    margin: 0 auto 16px;
+  }
+
+  .sheet h2{
+    font-size: 18px;
+    margin-bottom: 14px;
+  }
+
+  .field{ margin-bottom: 14px; }
+  .field label{
+    display:block;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--muted);
+  }
+  .field input{
+    width: 100%;
+    font-family: inherit;
+    font-size: 15px;
+    padding: 11px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--ink);
+  }
+
+  .sheet-actions{
+    display:flex;
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .btn{
+    flex:1;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 800;
+    border-radius: 12px;
+    padding: 13px;
+    border: none;
+    text-align:center;
+  }
+  .btn-primary{ background: var(--ink); color: #fff; }
+  .btn-secondary{ background: var(--line); color: var(--ink); }
+  .btn:active{ opacity: 0.85; }
+
+  .edit-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+    gap: 10px;
+  }
+  .edit-row:last-child{ border-bottom:none; }
+  .edit-row .label{ font-weight: 700; }
+  .edit-row .meta{ color: var(--muted); font-size: 11px; }
+  .edit-row input{
+    width:70px;
+    padding:8px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-family:inherit;
+    font-size:14px;
+    text-align:center;
+    background: var(--bg);
+    color: var(--ink);
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="top">
+    <div class="top-row">
+      <div>
+        <p class="eyebrow">Es Cemot Nusantara</p>
+        <h1>Stok Hari Ini</h1>
+      </div>
+      <div class="date-pill" id="todayDate">--</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat">
+        <div class="num" id="statTotal">0</div>
+        <div class="lbl">Total item</div>
+      </div>
+      <div class="stat">
+        <div class="num" id="statLow">0</div>
+        <div class="lbl">Perlu order</div>
+      </div>
+      <div class="stat">
+        <div class="num" id="statSafe">0</div>
+        <div class="lbl">Aman</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <div class="alert-box" id="alertBox">
+      <div class="alert-head"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Reminder order</div>
+      <div id="alertItems"></div>
+      <a href="#" class="wa-btn" id="waBtn" target="_blank">
+        Kirim reminder ke WA
+      </a>
+    </div>
+
+    <div class="section-title">
+      Stok bahan
+      <span class="count" id="itemCount">0 item</span>
+    </div>
+
+    <div class="item-grid" id="itemGrid"></div>
+
+  </div>
+
+  <button class="fab" id="settingsBtn" aria-label="Pengaturan">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+  </button>
+
+  <div class="sheet-overlay" id="sheetOverlay">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <h2>Pengaturan</h2>
+
+      <div class="field">
+        <label>Nomor WhatsApp Mba Ayu</label>
+        <input type="text" id="waNumber" placeholder="contoh: 081234567890">
+      </div>
+
+      <div class="section-title" style="margin-top: 18px;">Edit batas minimum</div>
+      <div id="editList"></div>
+
+      <div class="sheet-actions">
+        <button class="btn btn-secondary" id="closeSheetBtn">Tutup</button>
+        <button class="btn btn-primary" id="saveSettingsBtn">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  var STORAGE_KEY = 'escemotStok';
+  var WA_KEY = 'escemotWaNumber';
+
+  var defaultItems = [
+    { id: 'melon',    name: 'Melon',          icon: 'fruit', unit: 'buah',   qty: 1.5, min: 0.5,  isHalf: true },
+    { id: 'semangka', name: 'Semangka',       icon: 'fruit', unit: 'buah',   qty: 1.5, min: 0.5,  isHalf: true },
+    { id: 'cendol',   name: 'Cendol',         icon: 'drink', unit: 'bungkus',qty: 5,   min: 2 },
+    { id: 'eskrim',   name: 'Ice Cream',      icon: 'icecream', unit: 'box', qty: 12,  min: 6 },
+    { id: 'pudcok',   name: 'Puding Coklat',  icon: 'cup',   unit: 'pcs',    qty: 150, min: 100 },
+    { id: 'pudmangga',name: 'Puding Mangga',  icon: 'cup',   unit: 'pcs',    qty: 150, min: 100 },
+    { id: 'jelly',    name: 'Jelly Merah',    icon: 'cube',  unit: 'pcs',    qty: 150, min: 100 },
+    { id: 'crumbl',   name: 'Crumbl',         icon: 'cookie',unit: 'bungkus',qty: 4,   min: 2 },
+    { id: 'skm',      name: 'SKM',            icon: 'bottle',unit: 'kg',     qty: 20,  min: 12 },
+    { id: 'sendok',   name: 'Sendok TA',      icon: 'spoon', unit: 'pcs',    qty: 30,  min: 10 }
+  ];
+
+  var iconSvgs = {
+    fruit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 5c0-1.5 1-3 3-3"/></svg>',
+    drink: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l-1.5 17a1 1 0 0 1-1 1H8.5a1 1 0 0 1-1-1L6 3z"/><path d="M5 8h14"/></svg>',
+    icecream: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11a7 7 0 0 1 14 0z"/><path d="M5 11l6 11 6-11"/></svg>',
+    cup: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12l-1 15a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 4z"/><path d="M6 4l-1-2M18 4l1-2M9 4v0M15 4v0"/></svg>',
+    cube: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>',
+    cookie: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="14" cy="14" r="1" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/></svg>',
+    bottle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2h6v3l2 3v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V8l2-3V2z"/><path d="M7 12h10"/></svg>',
+    spoon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c3 0 5 2.5 5 5.5S14.5 13 12 13s-5-2.5-5-5.5S9 2 12 2z"/><path d="M12 13v9"/></svg>'
+  };
+
+  var items;
+  try{
+    items = JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultItems;
+  }catch(e){
+    items = defaultItems;
+  }
+
+  var waNumber = '';
+  try{
+    waNumber = localStorage.getItem(WA_KEY) || '';
+  }catch(e){}
+
+  var itemGrid = document.getElementById('itemGrid');
+  var alertBox = document.getElementById('alertBox');
+  var alertItems = document.getElementById('alertItems');
+  var waBtn = document.getElementById('waBtn');
+  var itemCount = document.getElementById('itemCount');
+  var statTotal = document.getElementById('statTotal');
+  var statLow = document.getElementById('statLow');
+  var statSafe = document.getElementById('statSafe');
+  var todayDate = document.getElementById('todayDate');
+  var sheetOverlay = document.getElementById('sheetOverlay');
+  var editList = document.getElementById('editList');
+  var waNumberInput = document.getElementById('waNumber');
+
+  var days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  var months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+
+  function formatToday(){
+    var d = new Date();
+    return days[d.getDay()] + ', ' + d.getDate() + ' ' + months[d.getMonth()];
+  }
+
+  function saveItems(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    }catch(e){}
+  }
+
+  function isLow(item){
+    return item.qty <= item.min;
+  }
+
+  function fmtQty(item){
+    if(item.isHalf){
+      var whole = Math.floor(item.qty);
+      var frac = item.qty - whole;
+      if(frac === 0) return String(whole);
+      if(Math.abs(frac - 0.5) < 0.01) return whole > 0 ? (whole + '½') : '½';
+    }
+    return String(item.qty);
+  }
+
+  function fmtThreshold(item){
+    if(item.isHalf){
+      return 'min ' + (item.min === 0.5 ? '½' : item.min) + ' ' + item.unit;
+    }
+    return 'min ' + item.min + ' ' + item.unit;
+  }
+
+  function step(item){
+    return item.isHalf ? 0.5 : 1;
+  }
+
+  function escapeHtml(str){
+    var d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  function render(){
+    todayDate.textContent = formatToday();
+
+    itemGrid.innerHTML = '';
+    var lowCount = 0;
+
+    for(var i = 0; i < items.length; i++){
+      var item = items[i];
+      var low = isLow(item);
+      if(low) lowCount++;
+
+      var card = document.createElement('div');
+      card.className = 'item-card' + (low ? ' low' : '');
+
+      card.innerHTML =
+        '<div class="item-icon">' + (iconSvgs[item.icon] || iconSvgs.cube) + '</div>' +
+        '<div class="item-info">' +
+          '<div class="item-name">' + escapeHtml(item.name) + '</div>' +
+          '<div class="item-threshold">' + fmtThreshold(item) + '</div>' +
+        '</div>' +
+        '<div class="qty-controls">' +
+          '<button class="qty-btn" data-action="dec" data-id="' + item.id + '" aria-label="Kurangi">−</button>' +
+          '<div class="qty-val">' +
+            '<span class="num">' + fmtQty(item) + '</span>' +
+            '<span class="unit">' + escapeHtml(item.unit) + '</span>' +
+          '</div>' +
+          '<button class="qty-btn" data-action="inc" data-id="' + item.id + '" aria-label="Tambah">+</button>' +
+        '</div>' +
+        '<div class="status-dot"></div>';
+
+      itemGrid.appendChild(card);
+    }
+
+    itemCount.textContent = items.length + ' item';
+    statTotal.textContent = items.length;
+    statLow.textContent = lowCount;
+    statSafe.textContent = items.length - lowCount;
+
+    updateAlert();
+  }
+
+  function updateAlert(){
+    var lowItems = [];
+    for(var i = 0; i < items.length; i++){
+      if(isLow(items[i])) lowItems.push(items[i]);
+    }
+
+    if(lowItems.length === 0){
+      alertBox.classList.remove('show');
+      return;
+    }
+
+    alertBox.classList.add('show');
+
+    var html = '';
+    var lines = [];
+    for(var j = 0; j < lowItems.length; j++){
+      var it = lowItems[j];
+      html += '<div class="alert-item">' +
+                '<span class="alert-name">' + escapeHtml(it.name) + '</span>' +
+                '<span class="alert-sisa">sisa ' + fmtQty(it) + ' ' + escapeHtml(it.unit) + '</span>' +
+              '</div>';
+      lines.push('- ' + it.name + ': sisa ' + fmtQty(it) + ' ' + it.unit + ' (batas ' + fmtThreshold(it).replace('min ', '') + ')');
+    }
+    alertItems.innerHTML = html;
+
+    var message = 'Halo Mba Ayu, tolong order bahan berikut ya:\n\n' + lines.join('\n') + '\n\nTerima kasih';
+
+    var num = (waNumber || '').replace(/[^0-9+]/g, '');
+    if(!num){ num = '+628888357695'; }
+    waBtn.href = 'https://wa.me/' + num + '?text=' + encodeURIComponent(message);
+  }
+
+  itemGrid.addEventListener('click', function(e){
+    var btn = e.target.closest('button');
+    if(!btn) return;
+    var id = btn.getAttribute('data-id');
+    var action = btn.getAttribute('data-action');
+
+    var item = null;
+    for(var i = 0; i < items.length; i++){
+      if(items[i].id === id){ item = items[i]; break; }
+    }
+    if(!item) return;
+
+    var s = step(item);
+    if(action === 'inc'){
+      item.qty = Math.round((item.qty + s) * 10) / 10;
+    }else if(action === 'dec'){
+      item.qty = Math.max(0, Math.round((item.qty - s) * 10) / 10);
+    }
+
+    saveItems();
+    render();
+  });
+
+  function renderEditList(){
+    var html = '';
+    for(var i = 0; i < items.length; i++){
+      var item = items[i];
+      html += '<div class="edit-row">' +
+                '<div>' +
+                  '<div class="label">' + escapeHtml(item.name) + '</div>' +
+                  '<div class="meta">batas: ' + fmtThreshold(item).replace('min ', '') + '</div>' +
+                '</div>' +
+                '<input type="number" step="' + (item.isHalf ? 0.5 : 1) + '" min="0" value="' + item.min + '" data-id="' + item.id + '" class="min-input">' +
+              '</div>';
+    }
+    editList.innerHTML = html;
+  }
+
+  document.getElementById('settingsBtn').addEventListener('click', function(){
+    waNumberInput.value = waNumber;
+    renderEditList();
+    sheetOverlay.classList.add('show');
+  });
+
+  document.getElementById('closeSheetBtn').addEventListener('click', function(){
+    sheetOverlay.classList.remove('show');
+  });
+
+  sheetOverlay.addEventListener('click', function(e){
+    if(e.target === sheetOverlay) sheetOverlay.classList.remove('show');
+  });
+
+  document.getElementById('saveSettingsBtn').addEventListener('click', function(){
+    waNumber = waNumberInput.value.trim();
+    try{ localStorage.setItem(WA_KEY, waNumber); }catch(e){}
+
+    var inputs = document.querySelectorAll('.min-input');
+    for(var i = 0; i < inputs.length; i++){
+      var input = inputs[i];
+      var id = input.getAttribute('data-id');
+      for(var j = 0; j < items.length; j++){
+        if(items[j].id === id){
+          var val = parseFloat(input.value);
+          if(!isNaN(val)) items[j].min = val;
+          break;
+        }
+      }
+    }
+
+    saveItems();
+    render();
+    sheetOverlay.classList.remove('show');
+  });
+
+  render();
+</script>
+</body>
+</html>
